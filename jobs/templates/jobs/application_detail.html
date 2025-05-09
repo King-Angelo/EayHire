@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load job_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Application Details -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Application Details</h5>
+                </div>
+                <div class="card-body">
+                    <h4>{{ application.job.title }}</h4>
+                    <p class="text-muted">{{ application.job.employer.company_name }}</p>
+                    
+                    <div class="mb-4">
+                        <h6 class="fw-bold">Status</h6>
+                        <span class="badge bg-{{ application.status }}">{{ application.get_status_display }}</span>
+                        {% if user.myapp_employer %}
+                        <form method="post" action="{% url 'jobs:application_status_action' application.id %}" class="d-inline ms-2">
+                            {% csrf_token %}
+                            <button name="status" value="shortlisted" class="btn btn-sm btn-info">Shortlist</button>
+                            <button name="status" value="interviewing" class="btn btn-sm btn-warning">Interview</button>
+                            <button name="status" value="accepted" class="btn btn-sm btn-success">Accept</button>
+                            <button name="status" value="rejected" class="btn btn-sm btn-danger">Reject</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="fw-bold">Applied On</h6>
+                        <p>{{ application.applied_at|date:"F j, Y, g:i a" }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="fw-bold">Cover Letter</h6>
+                        <div class="card">
+                            <div class="card-body bg-light">
+                                {{ application.cover_letter|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="fw-bold">Resume</h6>
+                        <div class="d-flex align-items-center">
+                            <a href="{% url 'jobs:view_resume' application.id %}" class="btn btn-primary me-2" target="_blank">
+                                <i class="fas fa-file-alt me-2"></i>View Resume
+                            </a>
+                            <a href="{% url 'jobs:view_resume' application.id %}?download=true" class="btn btn-outline-primary">
+                                <i class="fas fa-download me-2"></i>Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status History -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Status History</h5>
+                </div>
+                <div class="card-body">
+                    {% if application.status_history.all %}
+                        <div class="timeline">
+                            {% for history in application.status_history.all %}
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-{{ history.new_status }}"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">{{ history.get_new_status_display }}</h6>
+                                        <p class="text-muted mb-1">
+                                            <small>Changed on {{ history.changed_at|date:"F j, Y, g:i a" }}</small>
+                                        </p>
+                                        {% if history.comments %}
+                                            <p class="mb-0">{{ history.comments }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No status changes recorded yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Applicant Details -->
+            {% if user.employer %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Applicant Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        {% if application.applicant.profile_picture %}
+                            <img src="{{ application.applicant.profile_picture.url }}" alt="Profile Picture" class="rounded-circle me-3" style="width: 64px; height: 64px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-secondary me-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                                <i class="fas fa-user text-white fa-2x"></i>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h6 class="mb-1">{{ application.applicant.user.get_full_name }}</h6>
+                            <p class="text-muted mb-0">{{ application.applicant.location }}</p>
+                        </div>
+                    </div>
+
+                    {% if application.applicant.professional_summary %}
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Professional Summary</h6>
+                        <p>{{ application.applicant.professional_summary }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if application.applicant.skills %}
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Skills</h6>
+                        {% for skill in application.applicant.skills|split_skills %}
+                            <span class="badge bg-secondary me-1">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'jobs:application_status_update' application.pk %}" class="btn btn-primary">
+                            Update Status
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Job Details -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Job Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Job Type</h6>
+                        <p>{{ application.job.get_job_type_display }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Location</h6>
+                        <p>{{ application.job.location }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Experience Level</h6>
+                        <p>{{ application.job.get_experience_level_display }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Salary Range</h6>
+                        <p>${{ application.job.salary_min|floatformat:0 }} - ${{ application.job.salary_max|floatformat:0 }}</p>
+                    </div>
+
+                    <div class="d-grid">
+                        <a href="{% url 'jobs:job_detail' application.job.pk %}" class="btn btn-outline-primary">
+                            View Full Job Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 40px;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.timeline-content {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+/* Status Colors */
+.bg-pending { background-color: #ffc107; color: #212529; }
+.bg-reviewing { background-color: #17a2b8; color: #fff; }
+.bg-shortlisted { background-color: #0dcaf0; color: #fff; }
+.bg-interviewing { background-color: #6610f2; color: #fff; }
+.bg-accepted { background-color: #198754; color: #fff; }
+.bg-rejected { background-color: #dc3545; color: #fff; }
+.bg-withdrawn { background-color: #6c757d; color: #fff; }
+</style>
+{% endblock %} 

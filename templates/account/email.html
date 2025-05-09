@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account %}
+
+{% block head_title %}{% trans "Email Addresses" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .email-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin: 2rem auto;
+        max-width: 800px;
+    }
+
+    .email-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .email-header h1 {
+        color: #0d6efd;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .email-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .email-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+    }
+
+    .email-item.primary {
+        background: #e7f1ff;
+        border-color: #0d6efd;
+    }
+
+    .email-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-email {
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-success {
+        background-color: #198754;
+        border-color: #198754;
+    }
+
+    .verification-badge {
+        background: #198754;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+    }
+
+    .primary-badge {
+        background: #0d6efd;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+    }
+
+    .alert-success {
+        background-color: #d1e7dd;
+        border-color: #badbcc;
+        color: #0f5132;
+    }
+
+    .alert-error {
+        background-color: #f8d7da;
+        border-color: #f5c2c7;
+        color: #842029;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="email-section">
+        <div class="email-header">
+            <h1>{% trans "Email Addresses" %}</h1>
+            {% if user.emailaddress_set.all %}
+            <p>{% trans 'The following email addresses are associated with your account:' %}</p>
+            {% endif %}
+        </div>
+
+        {% if user.emailaddress_set.all %}
+        <form action="{% url 'account_email' %}" class="email_list" method="post">
+            {% csrf_token %}
+            <ul class="email-list">
+                {% for emailaddress in user.emailaddress_set.all %}
+                <li class="email-item {% if emailaddress.primary %}primary{% endif %}">
+                    <div class="email-info">
+                        <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}primary_email{%endif%}">
+                            <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
+                            {{ emailaddress.email }}
+                            {% if emailaddress.verified %}
+                            <span class="verification-badge">{% trans "Verified" %}</span>
+                            {% else %}
+                            <span class="verification-badge" style="background: #dc3545;">{% trans "Unverified" %}</span>
+                            {% endif %}
+                            {% if emailaddress.primary %}
+                            <span class="primary-badge">{% trans "Primary" %}</span>
+                            {% endif %}
+                        </label>
+                    </div>
+                    <div class="email-actions">
+                        {% if not emailaddress.verified %}
+                        <button class="btn btn-primary btn-email" type="submit" name="action_send" value="{{emailaddress.email}}">{% trans 'Re-send Verification' %}</button>
+                        {% endif %}
+                        {% if emailaddress.primary %}
+                        <button class="btn btn-secondary btn-email" type="submit" name="action_primary" value="{{emailaddress.email}}">{% trans 'Make Primary' %}</button>
+                        {% endif %}
+                        <button class="btn btn-danger btn-email" type="submit" name="action_remove" value="{{emailaddress.email}}">{% trans 'Remove' %}</button>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit" name="action_primary">{% trans 'Make Primary' %}</button>
+                <button class="btn btn-danger" type="submit" name="action_remove">{% trans 'Remove' %}</button>
+            </div>
+        </form>
+        {% else %}
+        <div class="alert alert-error">
+            <p><strong>{% trans 'Warning:'%}</strong> {% trans "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc." %}</p>
+        </div>
+        {% endif %}
+
+        <h2>{% trans "Add Email Address" %}</h2>
+        <form method="post" action="{% url 'account_email' %}" class="add_email">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div class="alert alert-error">
+                    {{ form.email.errors }}
+                </div>
+                {% endif %}
+            </div>
+            <button class="btn btn-primary" name="action_add" type="submit">{% trans "Add Email" %}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+(function() {
+    var message = "{% trans 'Do you really want to remove the selected email address?' %}";
+    var actions = document.getElementsByName('action_remove');
+    if (actions.length) {
+        actions[0].addEventListener("click", function(e) {
+            if (! confirm(message)) {
+                e.preventDefault();
+            }
+        });
+    }
+})();
+</script>
+{% endblock %} 

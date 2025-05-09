@@ -1,0 +1,26 @@
+Job Posting Deadline Reminder
+
+Dear {{ company_name }},
+
+This is a reminder that your job posting "{{ job.title }}" is approaching its deadline.
+
+{% if period == 'day' %}
+YOUR JOB POSTING WILL EXPIRE IN LESS THAN 24 HOURS!
+{% elif period == 'three_days' %}
+Your job posting will expire in less than 3 days.
+{% else %}
+Your job posting will expire in less than a week.
+{% endif %}
+
+Current Statistics:
+- Deadline: {{ deadline|date:"F d, Y" }} at {{ deadline|time:"g:i A" }}
+- Total Applications: {{ applications_count }}
+- Total Views: {{ job.views_count }}
+{% if job.application_rate > 0 %}- Application Rate: {{ job.application_rate|floatformat:1 }}%{% endif %}
+
+If you would like to extend the deadline or make any changes to the posting, please visit your employer dashboard at:
+{{ job_url }}
+
+---
+This is an automated message from the Job Portal. Please do not reply to this email.
+If you have any questions, please contact our support team. 

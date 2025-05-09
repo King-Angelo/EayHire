@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .job-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .job-title {
+            color: #2563eb;
+            font-size: 18px;
+            margin: 0 0 10px 0;
+        }
+        .company-name {
+            color: #6b7280;
+            font-size: 16px;
+            margin: 0 0 10px 0;
+        }
+        .job-details {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 9999px;
+            background-color: #e5e7eb;
+            color: #374151;
+            margin-right: 5px;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #2563eb;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>New Jobs Found!</h1>
+        <p>Hi {{ jobseeker.user.first_name }},</p>
+        <p>We found {{ new_jobs|length }} new job{{ new_jobs|length|pluralize }} matching your saved search "{{ search_title }}".</p>
+    </div>
+
+    {% for job in new_jobs %}
+    <div class="job-card">
+        <h2 class="job-title">{{ job.title }}</h2>
+        <h3 class="company-name">{{ job.employer.company_name }}</h3>
+        <p class="job-details">
+            <span class="badge">{{ job.get_job_type_display }}</span>
+            <span class="badge">{{ job.get_experience_level_display }}</span>
+            {% if job.is_remote %}
+            <span class="badge">Remote</span>
+            {% endif %}
+        </p>
+        <p class="job-details">
+            <strong>Location:</strong> {{ job.location }}<br>
+            {% if job.salary_min and job.salary_max %}
+            <strong>Salary:</strong> ${{ job.salary_min|floatformat:0 }} - ${{ job.salary_max|floatformat:0 }}<br>
+            {% endif %}
+            <strong>Posted:</strong> {{ job.created_at|timesince }} ago
+        </p>
+        <a href="{{ job.get_absolute_url }}" class="cta-button">View Job</a>
+    </div>
+    {% endfor %}
+
+    <p>
+        <a href="{{ search_url }}" class="cta-button">View All Matching Jobs</a>
+    </p>
+
+    <div class="footer">
+        <p>
+            You're receiving this email because you enabled notifications for this saved search.
+            To manage your notification settings, visit your saved searches in your account dashboard.
+        </p>
+        <p>
+            © {% now "Y" %} JobPortal. All rights reserved.
+        </p>
+    </div>
+</body>
+</html> 

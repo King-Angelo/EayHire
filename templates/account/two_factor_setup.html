@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">{% trans "Set Up Two-Factor Authentication" %}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        {% trans "To set up two-factor authentication, follow these steps:" %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4>{% trans "1. Install an Authenticator App" %}</h4>
+                        <p>{% trans "Download and install one of these apps on your phone:" %}</p>
+                        <ul>
+                            <li>Google Authenticator</li>
+                            <li>Microsoft Authenticator</li>
+                            <li>Authy</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4>{% trans "2. Scan the QR Code" %}</h4>
+                        <div class="text-center">
+                            <img src="{{ qr_code_url }}" alt="QR Code" class="img-fluid">
+                            <p class="mt-2">{{ secret_key }}</p>
+                        </div>
+                    </div>
+
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="code">{% trans "Enter the 6-digit code from your authenticator app:" %}</label>
+                            <input type="text" name="code" id="code" class="form-control" required>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary">{% trans "Verify and Enable 2FA" %}</button>
+                        </div>
+                    </form>
+
+                    {% if backup_codes %}
+                    <div class="mt-4">
+                        <h4>{% trans "Backup Codes" %}</h4>
+                        <div class="alert alert-warning">
+                            {% trans "Save these backup codes in a secure place. You can use them to access your account if you lose your authenticator device." %}
+                        </div>
+                        <div class="bg-light p-3">
+                            {% for code in backup_codes %}
+                            <div class="backup-code">{{ code }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

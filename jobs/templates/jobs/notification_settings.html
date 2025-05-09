@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Notification Settings</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if user.myapp_jobseeker %}
+                            <h5 class="mb-3">Job Seeker Notifications</h5>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" id="notify_application_status" name="notify_application_status" {% if email_preferences.application_status %}checked{% endif %}>
+                                    <label class="form-check-label" for="notify_application_status">Application Status Updates</label>
+                                </div>
+                                <small class="text-muted">Receive notifications when your application status changes</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" id="notify_job_alerts" name="notify_job_alerts" {% if email_preferences.job_alerts %}checked{% endif %}>
+                                    <label class="form-check-label" for="notify_job_alerts">Job Alerts</label>
+                                </div>
+                                <small class="text-muted">Receive notifications about new job matches</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" id="notify_saved_searches" name="notify_saved_searches" {% if email_preferences.saved_searches %}checked{% endif %}>
+                                    <label class="form-check-label" for="notify_saved_searches">Saved Search Alerts</label>
+                                </div>
+                                <small class="text-muted">Receive notifications about new results from your saved searches</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" id="notify_messages" name="notify_messages" {% if email_preferences.messages %}checked{% endif %}>
+                                    <label class="form-check-label" for="notify_messages">Messages</label>
+                                </div>
+                                <small class="text-muted">Receive notifications about new messages</small>
+                            </div>
+                            
+                        {% elif user.myapp_employer %}
+                            <h5 class="mb-3">Employer Notifications</h5>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" id="notify_new_applications" name="notify_new_applications" {% if email_preferences.new_applications %}checked{% endif %}>
+                                    <label class="form-check-label" for="notify_new_applications">New Applications</label>
+                                </div>
+                                <small class="text-muted">Receive notifications when candidates apply to your jobs</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" id="notify_messages" name="notify_messages" {% if email_preferences.messages %}checked{% endif %}>
+                                    <label class="form-check-label" for="notify_messages">Messages</label>
+                                </div>
+                                <small class="text-muted">Receive notifications about new messages</small>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

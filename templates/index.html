@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block content %}
+<div class="container">
+    <h1>Welcome to Job Portal</h1>
+    
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}!</p>
+        <a href="{% url 'account_logout' %}">Logout</a>
+    {% else %}
+        <p>Please <a href="{% url 'account_login' %}">login</a> to continue</p>
+    {% endif %}
+</div>
+{% endblock %} 

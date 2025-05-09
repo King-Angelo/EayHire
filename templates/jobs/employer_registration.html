@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{% trans "Employer Registration" %}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h1 class="h3 mb-0">{% trans "Employer Registration" %}</h1>
+        </div>
+        <div class="card-body p-4">
+          <div class="alert alert-info mb-4">
+            <i class="fas fa-info-circle me-2"></i>
+            Create an employer account to post jobs and find the perfect candidates.
+          </div>
+
+          <form method="post" enctype="multipart/form-data" class="employer-form" novalidate>
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+              <ul class="mb-0">
+                {% for field in form %}
+                  {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+
+            <div class="row">
+              <!-- Company Information -->
+              <div class="col-12">
+                <h2 class="h5 mb-4 text-primary">Company Information</h2>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="company_name" class="form-label">Company Name*</label>
+                {{ form.company_name }}
+                {% if form.company_name.errors %}
+                    <div class="alert alert-danger">{{ form.company_name.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="website" class="form-label">Company Website</label>
+                {{ form.website }}
+                {% if form.website.errors %}
+                    <div class="alert alert-danger">{{ form.website.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-12 mb-3">
+                <label for="company_description" class="form-label">Company Description*</label>
+                {{ form.company_description }}
+                {% if form.company_description.errors %}
+                    <div class="alert alert-danger">{{ form.company_description.errors }}</div>
+                {% endif %}
+                <small class="text-muted">Briefly describe your company, culture, and what makes it unique.</small>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="company_size" class="form-label">Company Size*</label>
+                {{ form.company_size }}
+                {% if form.company_size.errors %}
+                    <div class="alert alert-danger">{{ form.company_size.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="industry" class="form-label">Industry*</label>
+                {{ form.industry }}
+                {% if form.industry.errors %}
+                    <div class="alert alert-danger">{{ form.industry.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-12 mb-4">
+                <label for="company_logo" class="form-label">Company Logo</label>
+                <input type="file" class="form-control" id="company_logo" name="company_logo" accept="image/*">
+                <small class="text-muted">Recommended size: 200x200px, Max size: 2MB</small>
+              </div>
+
+              <!-- Contact Person Information -->
+              <div class="col-12">
+                <h2 class="h5 mb-4 text-primary">Contact Person Information</h2>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="username" class="form-label">Full Name*</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="alert alert-danger">{{ form.username.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="job_title" class="form-label">Position*</label>
+                {{ form.job_title }}
+                {% if form.job_title.errors %}
+                    <div class="alert alert-danger">{{ form.job_title.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email Address*</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="alert alert-danger">{{ form.email.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">Phone Number*</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                    <div class="alert alert-danger">{{ form.phone.errors }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Location Information -->
+              <div class="col-12">
+                <h2 class="h5 mb-4 text-primary">Location Information</h2>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="country" class="form-label">Country*</label>
+                {{ form.country }}
+                {% if form.country.errors %}
+                    <div class="alert alert-danger">{{ form.country.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="location" class="form-label">City*</label>
+                {{ form.location }}
+                {% if form.location.errors %}
+                    <div class="alert alert-danger">{{ form.location.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-12 mb-4">
+                <label for="address" class="form-label">Address*</label>
+                <textarea class="form-control" id="address" name="address" rows="2" required></textarea>
+              </div>
+
+              <!-- Account Security -->
+              <div class="col-12">
+                <h2 class="h5 mb-4 text-primary">Account Security</h2>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="password1" class="form-label">Password*</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="alert alert-danger">{{ form.password1.errors }}</div>
+                {% endif %}
+                <div class="password-requirements mt-2">
+                  <small class="text-muted">
+                    <ul class="ps-3 mb-0">
+                      <li>At least 12 characters long</li>
+                      <li>Include uppercase and lowercase letters</li>
+                      <li>Include numbers and special characters</li>
+                      <li>Cannot be too similar to your personal information</li>
+                    </ul>
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="password2" class="form-label">Confirm Password*</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="alert alert-danger">{{ form.password2.errors }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Terms and Conditions -->
+              <div class="col-12 mb-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                  <label class="form-check-label" for="terms">
+                    I agree to the <a href="{% url 'terms' %}" target="_blank">Terms of Service</a> and 
+                    <a href="{% url 'privacy_policy' %}" target="_blank">Privacy Policy</a>
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Create Employer Account
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <p class="text-muted">
+          Already have an account? <a href="{% url 'account_login' %}" class="text-primary">Sign In</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.card {
+  border-radius: 10px;
+  border: none;
+}
+.card-header {
+  border-top-left-radius: 10px !important;
+  border-top-right-radius: 10px !important;
+}
+.form-control, .form-select {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+.form-control:focus, .form-select:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+.password-requirements ul {
+  font-size: 0.85rem;
+}
+.alert {
+  border-radius: 8px;
+}
+.form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+.text-primary {
+  color: var(--bs-primary) !important;
+}
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+</style>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize form validation
+  const form = document.querySelector('.employer-form');
+  
+  form.addEventListener('submit', function(event) {
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    form.classList.add('was-validated');
+  });
+
+  // Password matching validation
+  const password1 = document.getElementById('password1');
+  const password2 = document.getElementById('password2');
+
+  function validatePassword() {
+    if (password1.value !== password2.value) {
+      password2.setCustomValidity("Passwords don't match");
+    } else {
+      password2.setCustomValidity('');
+    }
+  }
+
+  password1.addEventListener('change', validatePassword);
+  password2.addEventListener('keyup', validatePassword);
+});
+</script>
+{% endblock %}
+{% endblock %} 

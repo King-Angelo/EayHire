@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load account %}
+{% load socialaccount %}
+{% load static %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    .login-container {
+        max-width: 400px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-container h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+    }
+
+    .login-form .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .login-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #555;
+    }
+
+    .login-form input[type="text"],
+    .login-form input[type="password"],
+    .login-form input[type="email"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+
+    .login-form button {
+        width: 100%;
+        padding: 0.75rem;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .login-form button:hover {
+        background: #0056b3;
+    }
+
+    .social-login {
+        margin-top: 2rem;
+        text-align: center;
+        padding: 1rem 0;
+        border-top: 1px solid #eee;
+    }
+
+    .social-login p {
+        color: #666;
+        margin-bottom: 1rem;
+    }
+
+    .social-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin: 0 auto;
+        max-width: 300px;
+    }
+
+    .social-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        color: white !important;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-weight: 500;
+        border: none;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .social-button:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .social-button i {
+        margin-right: 12px;
+        font-size: 18px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .google-login {
+        background-color: #DB4437;
+    }
+
+    .facebook-login {
+        background-color: #4267B2;
+    }
+
+    .github-login {
+        background-color: #24292e;
+    }
+
+    .alert {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 5px;
+    }
+
+    .alert-error {
+        background: #fee;
+        color: #c00;
+        border: 1px solid #fcc;
+    }
+
+    .login-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        color: #666;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    .login-footer a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .login-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #eee;
+    }
+
+    .divider span {
+        padding: 0 10px;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h1>{% trans "Sign In" %}</h1>
+
+    {% if form.errors %}
+    <div class="alert alert-error">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+    <div class="social-buttons">
+        {% for provider in socialaccount_providers %}
+            {% if provider.id == 'google' %}
+            <a href="{% provider_login_url 'google' %}" class="social-button google-login">
+                <i class="fab fa-google"></i>
+                <span>{% trans "Continue with Google" %}</span>
+            </a>
+            {% elif provider.id == 'github' %}
+            <a href="{% provider_login_url 'github' %}" class="social-button github-login">
+                <i class="fab fa-github"></i>
+                <span>{% trans "Continue with GitHub" %}</span>
+            </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="divider">
+        <span>{% trans "or" %}</span>
+    </div>
+
+    <form class="login-form" method="POST" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.login.id_for_label }}">{% trans "Email" %}</label>
+            {{ form.login }}
+            {% if form.login.errors %}
+                <div class="alert alert-danger">{{ form.login.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="alert alert-danger">{{ form.password.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label class="checkbox">
+                {{ form.remember }}
+                {% trans "Remember Me" %}
+            </label>
+        </div>
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <button type="submit" class="btn btn-primary">{% trans "Sign In" %}</button>
+    </form>
+
+    <div class="login-footer">
+        <p>{% trans "Don't have an account?" %} <a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a></p>
+        <p><a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a></p>
+    </div>
+</div>
+{% endblock %} 

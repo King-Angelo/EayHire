@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Job Postings</h2>
+        <a href="{% url 'jobs:job_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Post New Job
+        </a>
+    </div>
+
+    <div class="row">
+        {% for job in jobs %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title">{{ job.title }}</h5>
+                        <span class="badge {% if job.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ job.is_active|yesno:"Active,Inactive" }}
+                        </span>
+                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ job.employer.company_name }}</h6>
+                    <p class="card-text">
+                        <i class="fas fa-map-marker-alt"></i> {{ job.location }}<br>
+                        <i class="fas fa-briefcase"></i> {{ job.job_type }}<br>
+                        <i class="fas fa-money-bill-wave"></i> ${{ job.salary_min }} - ${{ job.salary_max }}
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Posted {{ job.created_at|timesince }} ago<br>
+                            Applications: {{ job.total_applications }}
+                        </small>
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                            <a href="{% url 'jobs:job_edit' job.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-link btn-sm" type="button" id="dropdownMenuButton{{ job.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ job.pk }}">
+                                <li><a class="dropdown-item" href="{% url 'jobs:job_detail' job.pk %}">View Details</a></li>
+                                <li><a class="dropdown-item" href="{% url 'jobs:job_edit' job.pk %}">Edit</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'jobs:job_toggle_status' job.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">
+                                            {{ job.is_active|yesno:"Deactivate,Activate" }}
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                You haven't posted any jobs yet. 
+                <a href="{% url 'jobs:job_create' %}" class="alert-link">Post your first job</a> to get started!
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %} 

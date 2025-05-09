@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head_title %}Employer Registration{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --text-color: #1f2937;
+        --text-light: #6b7280;
+        --border-color: #e5e7eb;
+        --bg-light: #f9fafb;
+        --error-color: #dc2626;
+        --success-color: #059669;
+    }
+    .registration-outer {
+        min-height: 100vh;
+        background: var(--bg-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+    .registration-card {
+        width: 100%;
+        max-width: 700px;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(37,99,235,0.08), 0 1.5px 6px rgba(0,0,0,0.04);
+        padding: 2.5rem 2rem 2rem 2rem;
+        margin: 0 auto;
+    }
+    .registration-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    .registration-header h2 {
+        color: var(--primary-color);
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        letter-spacing: -1px;
+    }
+    .registration-header p {
+        color: var(--text-light);
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+    .section-title {
+        color: var(--text-color);
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin: 2rem 0 1.25rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--border-color);
+        letter-spacing: 0.5px;
+        position: relative;
+    }
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 40px;
+        height: 2px;
+        background: var(--primary-color);
+    }
+    .form-label {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.35rem;
+        font-size: 1rem;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        color: var(--text-color);
+        background: #f8fafc;
+        border: 1.5px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        transition: border-color 0.2s;
+    }
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(37,99,235,0.08);
+        outline: none;
+    }
+    .form-text {
+        font-size: 0.92rem;
+        color: var(--text-light);
+        margin-top: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+    .invalid-feedback, .text-danger {
+        color: var(--error-color);
+        font-size: 0.95rem;
+        margin-top: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border: none;
+        font-size: 1rem;
+    }
+    .alert-danger {
+        background-color: #fee2e2;
+        color: var(--error-color);
+    }
+    .btn-primary {
+        background: linear-gradient(90deg, var(--primary-color) 60%, var(--primary-hover));
+        color: #fff;
+        padding: 0.9rem 2.2rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 10px;
+        border: none;
+        transition: all 0.18s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+    }
+    .btn-primary:hover {
+        background: linear-gradient(90deg, var(--primary-hover) 60%, var(--primary-color));
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 6px 18px rgba(37,99,235,0.13);
+    }
+    .text-center {
+        text-align: center;
+    }
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -0.75rem;
+    }
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 0 0.75rem;
+    }
+    .mb-3 { margin-bottom: 1.5rem; }
+    .mt-4 { margin-top: 2.2rem; }
+    @media (max-width: 900px) {
+        .registration-card { padding: 2rem 0.5rem; }
+    }
+    @media (max-width: 768px) {
+        .registration-card { padding: 1.2rem 0.2rem; }
+        .col-md-6 { flex: 0 0 100%; max-width: 100%; padding: 0; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="registration-outer">
+  <div class="registration-card">
+    <div class="registration-header">
+      <h2>Employer Registration</h2>
+      <p>Create your employer account to start posting jobs and finding talent</p>
+                </div>
+    <form method="post" class="registration-form" enctype="multipart/form-data" autocomplete="off">
+                        {% csrf_token %}
+      {% if form.errors %}
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      <h4 class="section-title">Account Information</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+          <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                                {{ form.username }}
+          {% if form.username.errors %}<div class="invalid-feedback">{{ form.username.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+          <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                                {{ form.email }}
+          {% if form.email.errors %}<div class="invalid-feedback">{{ form.email.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+          <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}
+            <div class="invalid-feedback">{% for error in form.password1.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+          <div class="form-text">
+            <ul style="margin-bottom:0;">
+              <li>At least 8 characters</li>
+              <li>Uppercase, lowercase, and a number</li>
+              <li>Not too similar to your personal info</li>
+              <li>Not a common or numeric-only password</li>
+            </ul>
+          </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+          <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}
+            <div class="invalid-feedback">{% for error in form.password2.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+          <div class="form-text">Enter the same password as before, for verification.</div>
+                            </div>
+                        </div>
+      <h4 class="section-title">Company Information</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+          <label for="{{ form.company_name.id_for_label }}" class="form-label">Company Name</label>
+                                {{ form.company_name }}
+          {% if form.company_name.errors %}<div class="invalid-feedback">{{ form.company_name.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+          <label for="{{ form.industry.id_for_label }}" class="form-label">Industry</label>
+                                {{ form.industry }}
+          {% if form.industry.errors %}<div class="invalid-feedback">{{ form.industry.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+          <label for="{{ form.company_size.id_for_label }}" class="form-label">Company Size</label>
+                                {{ form.company_size }}
+          {% if form.company_size.errors %}<div class="invalid-feedback">{{ form.company_size.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+          <label for="{{ form.website.id_for_label }}" class="form-label">Website</label>
+                                {{ form.website }}
+          {% if form.website.errors %}<div class="invalid-feedback">{{ form.website.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+        <label for="{{ form.company_description.id_for_label }}" class="form-label">Company Description</label>
+                            {{ form.company_description }}
+        {% if form.company_description.errors %}<div class="invalid-feedback">{{ form.company_description.errors }}</div>{% endif %}
+        <div class="form-text">Provide a brief overview of your company, its mission, and values.</div>
+                        </div>
+                        <div class="mb-3">
+        <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                            {{ form.location }}
+        {% if form.location.errors %}<div class="invalid-feedback">{{ form.location.errors }}</div>{% endif %}
+      </div>
+      <div class="mb-3">
+        <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+        {{ form.country }}
+        {% if form.country.errors %}<div class="invalid-feedback">{{ form.country.errors }}</div>{% endif %}
+                        </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="{{ form.job_title.id_for_label }}" class="form-label">Job Title</label>
+          {{ form.job_title }}
+          {% if form.job_title.errors %}<div class="invalid-feedback">{{ form.job_title.errors }}</div>{% endif %}
+                        </div>
+        <div class="col-md-6 mb-3">
+          <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
+          {{ form.department }}
+          {% if form.department.errors %}<div class="invalid-feedback">{{ form.department.errors }}</div>{% endif %}
+                </div>
+            </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
+          {{ form.phone }}
+          {% if form.phone.errors %}<div class="invalid-feedback">{{ form.phone.errors }}</div>{% endif %}
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary">Register as Employer</button>
+      </div>
+    </form>
+    <div class="text-center mt-4">
+      <p class="form-text">Already have an account? <a href="{% url 'account_login' %}" class="text-primary">Login here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

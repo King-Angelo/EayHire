@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block head_title %}Saved Job - {{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Job Details -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{{ job.title }}</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ job.company.name }}</h5>
+                    <p class="card-text">
+                        <i class="fas fa-map-marker-alt"></i> {{ job.location }}<br>
+                        <i class="fas fa-briefcase"></i> {{ job.get_job_type_display }}<br>
+                        <i class="fas fa-money-bill-wave"></i> {{ job.salary_range }}<br>
+                        <i class="fas fa-calendar"></i> Posted on {{ job.created_at|date:"F j, Y" }}
+                    </p>
+                    
+                    <h5 class="mt-4">Job Description</h5>
+                    <div class="job-description">
+                        {{ job.description|safe }}
+                    </div>
+                    
+                    <h5 class="mt-4">Requirements</h5>
+                    <div class="requirements">
+                        {{ job.requirements|safe }}
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt me-2"></i>View Original Posting
+                        </a>
+                        <a href="{% url 'jobs:saved_job_delete' saved_job.pk %}" class="btn btn-danger">
+                            <i class="fas fa-trash-alt me-2"></i>Remove from Saved Jobs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Saved Job Notes -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Your Notes</h5>
+                </div>
+                <div class="card-body">
+                    {% if saved_job.notes %}
+                        <p class="card-text">{{ saved_job.notes }}</p>
+                        <a href="{% url 'jobs:saved_job_edit' saved_job.pk %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-2"></i>Edit Notes
+                        </a>
+                    {% else %}
+                        <p class="text-muted">No notes added yet.</p>
+                        <a href="{% url 'jobs:saved_job_edit' saved_job.pk %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-plus me-2"></i>Add Notes
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Similar Jobs -->
+            <div class="card shadow">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Similar Jobs</h5>
+                </div>
+                <div class="card-body">
+                    {% for similar_job in similar_jobs %}
+                        <div class="mb-3">
+                            <h6 class="card-title">{{ similar_job.title }}</h6>
+                            <p class="card-text small">
+                                {{ similar_job.company.name }}<br>
+                                <i class="fas fa-map-marker-alt"></i> {{ similar_job.location }}
+                            </p>
+                            <a href="{% url 'jobs:job_detail' similar_job.pk %}" class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        </div>
+                        {% if not forloop.last %}<hr>{% endif %}
+                    {% empty %}
+                        <p class="text-muted">No similar jobs found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

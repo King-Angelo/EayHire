@@ -1,0 +1,497 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head_title %}Job Seeker Registration{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --text-color: #1f2937;
+        --text-light: #6b7280;
+        --border-color: #e5e7eb;
+        --bg-light: #f9fafb;
+        --error-color: #dc2626;
+        --success-color: #059669;
+    }
+
+    .registration-container {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 2.5rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .registration-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .registration-header h2 {
+        color: var(--text-color);
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .registration-header p {
+        color: var(--text-light);
+        font-size: 1.1rem;
+    }
+    
+    .section-title {
+        color: var(--text-color);
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 2rem 0 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--border-color);
+        position: relative;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 50px;
+        height: 2px;
+        background: var(--primary-color);
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: var(--text-color);
+        background-color: white;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+
+    .form-text {
+        font-size: 0.875rem;
+        color: var(--text-light);
+        margin-top: 0.5rem;
+    }
+
+    .form-text ul {
+        padding-left: 1.25rem;
+        margin-top: 0.5rem;
+    }
+
+    .form-text li {
+        margin-bottom: 0.25rem;
+    }
+
+    .invalid-feedback {
+        color: var(--error-color);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border: none;
+    }
+
+    .alert-danger {
+        background-color: #fee2e2;
+        color: var(--error-color);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.875rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.2s ease-in-out;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .btn-primary:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .mt-4 {
+        margin-top: 2rem;
+    }
+
+    .mb-3 {
+        margin-bottom: 1rem;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -0.75rem;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 0 0.75rem;
+    }
+    
+    .select2-container {
+        width: 100% !important;
+    }
+    
+    .select2-container .select2-selection--single,
+    .select2-container .select2-selection--multiple {
+        height: auto;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 1.5;
+        padding: 0;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 100%;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: var(--primary-color);
+        border: none;
+        color: white;
+        border-radius: 4px;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        color: white;
+        margin-right: 0.5rem;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+        color: white;
+        opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+        .registration-container {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+
+        .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    /* Add these new styles for textarea fields */
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+    
+    /* Style for professional information textareas */
+    #id_professional_summary,
+    #id_education,
+    #id_experience {
+        min-height: 150px;
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--text-color);
+        background-color: white;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        transition: all 0.2s ease-in-out;
+    }
+    
+    #id_professional_summary:focus,
+    #id_education:focus,
+    #id_experience:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+    
+    /* Increase spacing between professional information sections */
+    .mb-4 {
+        margin-bottom: 2rem;
+    }
+
+    /* Add password field specific styles */
+    input[type="password"] {
+        font-family: monospace;
+        letter-spacing: 0.1em;
+    }
+    
+    input[type="password"]:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+    
+    /* Style for password requirements list */
+    .form-text ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 0.5rem;
+    }
+    
+    .form-text ul li {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-light);
+    }
+    
+    .form-text ul li:before {
+        content: "•";
+        position: absolute;
+        left: 0.5rem;
+        color: var(--primary-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="registration-container">
+    <div class="registration-header">
+        <h2>Job Seeker Registration</h2>
+        <p>Create your profile to start finding your dream job</p>
+    </div>
+    
+    <form method="post" class="registration-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        
+        <h4 class="section-title">Account Information</h4>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="invalid-feedback">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="invalid-feedback">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.password1.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="form-text">
+                    <ul>
+                        <li>Password must be at least 8 characters long</li>
+                        <li>Must contain at least one uppercase letter</li>
+                        <li>Must contain at least one lowercase letter</li>
+                        <li>Must contain at least one number</li>
+                        <li>Cannot be too similar to your other personal information</li>
+                        <li>Cannot be a commonly used password</li>
+                        </ul>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.password2.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="form-text">
+                    Enter the same password as before, for verification.
+                </div>
+            </div>
+        </div>
+
+        <h4 class="section-title">Personal Information</h4>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                    <div class="invalid-feedback">{{ form.phone.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                {{ form.location }}
+                {% if form.location.errors %}
+                    <div class="invalid-feedback">{{ form.location.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+            {{ form.address }}
+            {% if form.address.errors %}
+                <div class="invalid-feedback">{{ form.address.errors }}</div>
+            {% endif %}
+        </div>
+
+        <h4 class="section-title">Professional Information</h4>
+        <div class="mb-4">
+            <label for="{{ form.professional_summary.id_for_label }}" class="form-label">Professional Summary</label>
+            {{ form.professional_summary }}
+            {% if form.professional_summary.errors %}
+                <div class="invalid-feedback">{{ form.professional_summary.errors }}</div>
+            {% endif %}
+            <div class="form-text">
+                Provide a brief overview of your professional background and career objectives.
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <label for="{{ form.education.id_for_label }}" class="form-label">Education</label>
+            {{ form.education }}
+            {% if form.education.errors %}
+                <div class="invalid-feedback">{{ form.education.errors }}</div>
+            {% endif %}
+            <div class="form-text">
+                List your educational background, including degrees, certifications, and relevant coursework.
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <label for="{{ form.experience.id_for_label }}" class="form-label">Experience</label>
+            <textarea name="{{ form.experience.name }}" id="{{ form.experience.id_for_label }}" class="form-control" rows="6" placeholder="Detail your work experience, including job titles, responsibilities, and achievements.">{{ form.experience.value|default:'' }}</textarea>
+            {% if form.experience.errors %}
+                <div class="invalid-feedback">{{ form.experience.errors }}</div>
+            {% endif %}
+            <div class="form-text">
+                Detail your work experience, including job titles, responsibilities, and achievements.
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="{{ form.skills.id_for_label }}" class="form-label">Skills</label>
+            {{ form.skills }}
+            {% if form.skills.errors %}
+                <div class="invalid-feedback">{{ form.skills.errors }}</div>
+            {% endif %}
+            <div class="form-text">
+                List your key skills and competencies relevant to your target positions.
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.expected_salary.id_for_label }}" class="form-label">Expected Salary</label>
+                {{ form.expected_salary }}
+                {% if form.expected_salary.errors %}
+                    <div class="invalid-feedback">{{ form.expected_salary.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.preferred_job_types.id_for_label }}" class="form-label">Preferred Job Types</label>
+                {{ form.preferred_job_types }}
+                {% if form.preferred_job_types.errors %}
+                    <div class="invalid-feedback">{{ form.preferred_job_types.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="{{ form.preferred_locations.id_for_label }}" class="form-label">Preferred Locations</label>
+            {{ form.preferred_locations }}
+            {% if form.preferred_locations.errors %}
+                <div class="invalid-feedback">{{ form.preferred_locations.errors }}</div>
+            {% endif %}
+            <div class="form-text">
+                Specify the locations where you are willing to work.
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">Register as Job Seeker</button>
+        </div>
+    </form>
+    
+    <div class="text-center mt-4">
+        <p class="form-text">Already have an account? <a href="{% url 'account_login' %}" class="text-primary">Login here</a></p>
+    </div>
+</div>
+
+<!-- Include Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Initialize Select2 for multiple select fields
+        $('#id_preferred_job_types').select2({
+            theme: 'bootstrap4',
+            width: '100%',
+            placeholder: 'Select preferred job types',
+            allowClear: true
+        });
+    });
+</script>
+{% endblock %} 

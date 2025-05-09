@@ -1,0 +1,4 @@
+Requirement already satisfied: Django in c:\users\king\onedrive\documents\django-social-login-allauth-copy\venv\lib\site-packages (4.2.7)
+Requirement already satisfied: asgiref<4,>=3.6.0 in c:\users\king\onedrive\documents\django-social-login-allauth-copy\venv\lib\site-packages (from Django) (3.8.1)
+Requirement already satisfied: sqlparse>=0.3.1 in c:\users\king\onedrive\documents\django-social-login-allauth-copy\venv\lib\site-packages (from Django) (0.5.3)
+Requirement already satisfied: tzdata in c:\users\king\onedrive\documents\django-social-login-allauth-copy\venv\lib\site-packages (from Django) (2025.2)

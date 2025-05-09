@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Select Your Role{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Select Your Role</h2>
+                    
+                    {% if not user.is_authenticated %}
+                    <p class="text-center mb-4">Please select your role to continue with registration</p>
+                    {% else %}
+                    <p class="text-center mb-4">Please select your role to continue</p>
+                    {% endif %}
+
+                    <div class="row">
+                        <!-- Employer Card -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-building fa-3x mb-3 text-primary"></i>
+                                    <h3 class="card-title">Employer</h3>
+                                    <p class="card-text">Post jobs and find qualified candidates</p>
+                                    {% if not user.is_authenticated %}
+                                    <a href="{% url 'jobs:employer_register' %}" class="btn btn-primary btn-lg">
+                                        Register as Employer
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'jobs:employer_dashboard' %}" class="btn btn-primary btn-lg">
+                                        Continue as Employer
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Job Seeker Card -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-tie fa-3x mb-3 text-success"></i>
+                                    <h3 class="card-title">Job Seeker</h3>
+                                    <p class="card-text">Find and apply for jobs</p>
+                                    {% if not user.is_authenticated %}
+                                    <a href="{% url 'jobs:jobseeker_register' %}" class="btn btn-success btn-lg">
+                                        Register as Job Seeker
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'jobs:jobseeker_dashboard' %}" class="btn btn-success btn-lg">
+                                        Continue as Job Seeker
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <div class="text-center mt-4">
+                        <a href="{% url 'jobs:home' %}" class="btn btn-outline-secondary">Back to Home</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

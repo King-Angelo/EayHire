@@ -1,0 +1,66 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .content {
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>{% trans "Two-Factor Authentication Setup" %}</h2>
+    </div>
+    
+    <div class="content">
+        <p>{% trans "Hello" %} {{ user.get_full_name|default:user.username }},</p>
+        
+        <p>{% trans "This email is to confirm that two-factor authentication (2FA) has been enabled for your account." %}</p>
+        
+        <p>{% trans "If you did not enable 2FA, please contact our support team immediately." %}</p>
+        
+        <p>{% trans "For security reasons, please keep your backup codes in a safe place." %}</p>
+        
+        <p>{% trans "Best regards," %}<br>{% trans "Your Site Team" %}</p>
+    </div>
+    
+    <div class="footer">
+        <p>{% trans "This is an automated message, please do not reply to this email." %}</p>
+    </div>
+</body>
+</html> 

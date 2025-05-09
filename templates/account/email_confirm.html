@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load account %}
+
+{% block head_title %}{% trans "Confirm Email Address" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confirmation-container {
+        max-width: 600px;
+        margin: 3rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .confirmation-container h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+    }
+
+    .confirmation-content {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .confirmation-content p {
+        color: #555;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .confirmation-content .email-highlight {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .confirmation-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: #0056b3;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        border: none;
+    }
+
+    .btn-secondary:hover {
+        background: #545b62;
+    }
+
+    .alert {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .alert-warning {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="confirmation-container">
+    <h1>{% trans "Confirm Email Address" %}</h1>
+
+    <div class="confirmation-content">
+        {% if confirmation %}
+            {% user_display confirmation.email_address.user as user_display %}
+            <p>
+                {% blocktrans with confirmation.email_address.email as email %}
+                Please confirm that <span class="email-highlight">{{ email }}</span> is an email address for user {{ user_display }}.
+                {% endblocktrans %}
+            </p>
+
+            <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                {% csrf_token %}
+                <div class="confirmation-buttons">
+                    <button type="submit" class="btn btn-primary">{% trans "Confirm" %}</button>
+                </div>
+            </form>
+        {% else %}
+            {% url 'account_email' as email_url %}
+            <div class="alert alert-warning">
+                {% blocktrans %}This email confirmation link has expired or is invalid. Please <a href="{{ email_url }}">issue a new email confirmation request</a>.{% endblocktrans %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

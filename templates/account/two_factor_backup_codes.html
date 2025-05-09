@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">{% trans "Backup Codes" %}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        {% trans "These are your backup codes. Save them in a secure place. Each code can only be used once." %}
+                    </div>
+
+                    <div class="backup-codes bg-light p-3 mb-4">
+                        {% for code in backup_codes %}
+                        <div class="backup-code">{{ code }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="text-center">
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="submit" name="generate_new" class="btn btn-primary">
+                                {% trans "Generate New Backup Codes" %}
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="mt-4">
+                        <h4>{% trans "How to use backup codes:" %}</h4>
+                        <ol>
+                            <li>{% trans "When logging in, click 'Use backup code'" %}</li>
+                            <li>{% trans "Enter one of your backup codes" %}</li>
+                            <li>{% trans "That code will be used up and can't be used again" %}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

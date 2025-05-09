@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block head_title %}Notification{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header {% if notification.is_read %}bg-light{% else %}bg-primary text-white{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Notification</h4>
+                        <span class="badge {% if notification.is_read %}bg-secondary{% else %}bg-success{% endif %}">
+                            {% if notification.is_read %}Read{% else %}New{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="notification-meta mb-4">
+                        <p class="mb-2">
+                            <i class="fas fa-calendar"></i> 
+                            {{ notification.created_at|date:"F j, Y, g:i a" }}
+                        </p>
+                        {% if notification.is_read %}
+                            <p class="mb-2">
+                                <i class="fas fa-check-circle"></i> 
+                                Read on {{ notification.read_at|date:"F j, Y, g:i a" }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="notification-content mb-4">
+                        <h5 class="mb-3">{{ notification.title }}</h5>
+                        <p class="lead">{{ notification.message }}</p>
+                    </div>
+                    
+                    {% if notification.content_type.model == 'jobapplication' and application %}
+                        <div class="related-content mb-4">
+                            <h5>Related Application</h5>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ application.job.title }}</h6>
+                                    <p class="card-text">
+                                        <i class="fas fa-building"></i> {{ application.job.company.name }}<br>
+                                        <i class="fas fa-map-marker-alt"></i> {{ application.job.location }}<br>
+                                        <i class="fas fa-calendar"></i> Applied on {{ application.applied_at|date:"F j, Y" }}
+                                    </p>
+                                    <a href="{% url 'jobs:application_detail' application.pk %}" class="btn btn-outline-primary btn-sm">
+                                        View Application
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif notification.content_type.model == 'jobposting' and job %}
+                        <div class="related-content mb-4">
+                            <h5>Related Job</h5>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ job.title }}</h6>
+                                    <p class="card-text">
+                                        <i class="fas fa-building"></i> {{ job.company.name }}<br>
+                                        <i class="fas fa-map-marker-alt"></i> {{ job.location }}<br>
+                                        <i class="fas fa-briefcase"></i> {{ job.get_job_type_display }}
+                                    </p>
+                                    <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-outline-primary btn-sm">
+                                        View Job
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'jobs:notification_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Notifications
+                        </a>
+                        <a href="{% url 'jobs:notification_delete' notification.pk %}" class="btn btn-danger">
+                            <i class="fas fa-trash-alt me-2"></i>Delete Notification
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

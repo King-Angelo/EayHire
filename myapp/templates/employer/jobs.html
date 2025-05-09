@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>My Posted Jobs</h1>
+{% if jobs %}
+    <ul>
+    {% for job in jobs %}
+        <li>
+            <h2>{{ job.title }}</h2>
+            <p>{{ job.description }}</p>
+            <p>Posted on: {{ job.created_at }}</p>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No jobs posted yet.</p>
+{% endif %}
+{% endblock %} 

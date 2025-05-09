@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">{{ title }}</h2>
+    
+    {% if applications %}
+        <div class="row">
+            {% for application in applications %}
+                <div class="col-12 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ application.job.title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ application.job.company.name }}</h6>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-4">
+                                    <p><strong>Status:</strong> 
+                                        <span class="badge {% if application.status == 'pending' %}bg-warning{% elif application.status == 'accepted' %}bg-success{% elif application.status == 'rejected' %}bg-danger{% endif %}">
+                                            {{ application.get_status_display }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p><strong>Applied on:</strong> {{ application.created_at|date:"M d, Y" }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="{% url 'jobs:job_detail' application.job.pk %}" class="btn btn-outline-primary btn-sm">View Job</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info">
+            <p class="mb-0">You haven't applied to any jobs yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

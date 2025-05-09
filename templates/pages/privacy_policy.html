@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Privacy Policy" %}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h1 class="h3 mb-0">Privacy Policy</h1>
+        </div>
+        <div class="card-body p-4">
+          <div class="privacy-content">
+            <p class="lead mb-4">Last updated: {% now "F j, Y" %}</p>
+            
+            <section class="mb-4">
+              <h2 class="h4 mb-3">1. Information We Collect</h2>
+              <p>We collect information that you provide directly to us, including:</p>
+              <ul>
+                <li>Account information (name, email, password)</li>
+                <li>Profile information (resume, skills, experience)</li>
+                <li>Job preferences and applications</li>
+                <li>Communications with other users</li>
+              </ul>
+            </section>
+
+            <section class="mb-4">
+              <h2 class="h4 mb-3">2. How We Use Your Information</h2>
+              <p>We use the information we collect to:</p>
+              <ul>
+                <li>Provide and improve our services</li>
+                <li>Match job seekers with relevant opportunities</li>
+                <li>Communicate with you about our services</li>
+                <li>Ensure platform security and prevent fraud</li>
+              </ul>
+            </section>
+
+            <section class="mb-4">
+              <h2 class="h4 mb-3">3. Information Sharing</h2>
+              <p>We may share your information with:</p>
+              <ul>
+                <li>Employers (for job applications)</li>
+                <li>Service providers and partners</li>
+                <li>Legal authorities when required</li>
+              </ul>
+            </section>
+
+            <section class="mb-4">
+              <h2 class="h4 mb-3">4. Your Rights</h2>
+              <p>You have the right to:</p>
+              <ul>
+                <li>Access your personal information</li>
+                <li>Correct inaccurate data</li>
+                <li>Request deletion of your data</li>
+                <li>Opt-out of communications</li>
+              </ul>
+            </section>
+
+            <section class="mb-4">
+              <h2 class="h4 mb-3">5. Security</h2>
+              <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
+            </section>
+
+            <section>
+              <h2 class="h4 mb-3">6. Contact Us</h2>
+              <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+              <ul>
+                <li>Email: privacy@yourcompany.com</li>
+                <li>Address: Your Company Address</li>
+                <li>Phone: Your Company Phone</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.card {
+  border-radius: 10px;
+  border: none;
+}
+.card-header {
+  border-top-left-radius: 10px !important;
+  border-top-right-radius: 10px !important;
+}
+.privacy-content {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.privacy-content section {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.privacy-content section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.privacy-content ul {
+  padding-left: 1.2rem;
+}
+.privacy-content li {
+  margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %} 

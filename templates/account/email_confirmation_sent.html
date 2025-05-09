@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Verify Your Email Address" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-envelope fa-3x text-primary mb-3"></i>
+                        <h2 class="card-title mb-3">{% trans "Verify Your Email Address" %}</h2>
+                    </div>
+
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% blocktrans %}We have sent an email to <strong>{{ email }}</strong> for verification.{% endblocktrans %}
+                    </div>
+
+                    <p class="text-muted mb-4">
+                        {% blocktrans %}
+                        Please follow the link in the email to complete your signup. If you do not see the verification email in your main inbox, please check your spam folder.
+                        {% endblocktrans %}
+                    </p>
+
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-clock me-2"></i>
+                        {% trans "Please contact us if you do not receive the verification email within a few minutes." %}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'account_login' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Login" %}
+                        </a>
+                        <a href="{% url 'account_email' %}" class="btn btn-primary">
+                            {% trans "Manage Email Addresses" %}<i class="fas fa-cog ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Help Section -->
+            <div class="card mt-4 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-question-circle me-2"></i>{% trans "Need Help?" %}
+                    </h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-envelope me-2 text-muted"></i>
+                            {% trans "Check your spam/junk folder" %}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-sync me-2 text-muted"></i>
+                            {% trans "Try refreshing your email" %}
+                        </li>
+                        <li>
+                            <i class="fas fa-headset me-2 text-muted"></i>
+                            {% trans "Contact our support team" %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

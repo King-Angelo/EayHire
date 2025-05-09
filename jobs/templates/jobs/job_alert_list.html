@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Job Alerts{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Job Alerts</h1>
+        <a href="{% url 'jobs:job_alert_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create New Alert
+        </a>
+    </div>
+
+    {% if alerts %}
+        <div class="row">
+            {% for alert in alerts %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title">
+                                    {% if alert.title %}
+                                        {{ alert.title }}
+                                    {% else %}
+                                        All Jobs
+                                    {% endif %}
+                                </h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" 
+                                           {% if alert.is_active %}checked{% endif %}
+                                           onchange="toggleAlert({{ alert.pk }})">
+                                </div>
+                            </div>
+
+                            <div class="alert-criteria mb-3">
+                                {% if alert.location %}
+                                    <p><strong>Location:</strong> {{ alert.location }}</p>
+                                {% endif %}
+                                {% if alert.job_type %}
+                                    <p><strong>Job Type:</strong> {{ alert.get_job_type_display }}</p>
+                                {% endif %}
+                                {% if alert.industry %}
+                                    <p><strong>Industry:</strong> {{ alert.get_industry_display }}</p>
+                                {% endif %}
+                                {% if alert.experience_level %}
+                                    <p><strong>Experience Level:</strong> {{ alert.get_experience_level_display }}</p>
+                                {% endif %}
+                                {% if alert.salary_min or alert.salary_max %}
+                                    <p><strong>Salary Range:</strong> 
+                                        {% if alert.salary_min %}${{ alert.salary_min }}{% endif %}
+                                        {% if alert.salary_min and alert.salary_max %} - {% endif %}
+                                        {% if alert.salary_max %}${{ alert.salary_max }}{% endif %}
+                                    </p>
+                                {% endif %}
+                                {% if alert.skills.exists %}
+                                    <p><strong>Skills:</strong></p>
+                                    <div class="mb-2">
+                                        {% for skill in alert.skills.all %}
+                                            <span class="badge bg-secondary me-1">{{ skill.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <p><strong>Frequency:</strong> {{ alert.get_frequency_display }}</p>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <a href="{% url 'jobs:job_alert_update' alert.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="{% url 'jobs:job_alert_delete' alert.pk %}" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                                <small class="text-muted">Created {{ alert.created_at|timesince }} ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <p class="mb-0">You haven't created any job alerts yet. 
+                <a href="{% url 'jobs:job_alert_create' %}">Create your first alert</a> to get notified about new jobs matching your criteria.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleAlert(alertId) {
+    fetch(`/jobs/alerts/${alertId}/toggle/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to toggle alert status. Please try again.');
+    });
+}
+</script>
+{% endblock %} 

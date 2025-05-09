@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head_title %}EasyHire - Find Your Next Career{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: #0d6efd;
+        color: white;
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+
+    .search-section {
+        background: white;
+        padding: 2rem 0;
+        margin-top: -2rem;
+        margin-bottom: 3rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1;
+    }
+
+    .search-form {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+
+    .search-form .form-control,
+    .search-form .form-select {
+        border: 1px solid #dee2e6;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+
+    .search-form .btn-search {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+
+    .search-form .btn-search:hover {
+        background-color: #0b5ed7;
+        border-color: #0b5ed7;
+    }
+
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        border-bottom: none;
+        padding: 1.5rem;
+    }
+
+    .list-group-item {
+        border: none;
+        padding: 0.75rem 1.25rem;
+        background: transparent;
+    }
+
+    .list-group-item i {
+        width: 20px;
+    }
+
+    .job-card {
+        height: 100%;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .job-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .job-card .card-footer {
+        background: #f8f9fa;
+        border-top: none;
+        padding: 1rem 1.5rem;
+    }
+
+    .btn-custom {
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        border-radius: 8px;
+    }
+
+    .section-title {
+        position: relative;
+        margin-bottom: 3rem;
+        padding-bottom: 1rem;
+    }
+
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: #0d6efd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">Welcome to EasyHire</h1>
+        <p class="lead">Find your dream job or hire the perfect candidate</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="search-section">
+        <form method="get" action="{% url 'jobs:home' %}" class="search-form" id="searchForm">
+            <input type="text" name="q" class="form-control" placeholder="Job title or keywords" value="{{ request.GET.q }}">
+            <input type="text" name="location" class="form-control" placeholder="Location" value="{{ request.GET.location }}">
+            <select name="job_type" class="form-select">
+                <option value="">All Job Types</option>
+                <option value="FULL_TIME" {% if request.GET.job_type == 'FULL_TIME' %}selected{% endif %}>Full Time</option>
+                <option value="PART_TIME" {% if request.GET.job_type == 'PART_TIME' %}selected{% endif %}>Part Time</option>
+                <option value="CONTRACT" {% if request.GET.job_type == 'CONTRACT' %}selected{% endif %}>Contract</option>
+                <option value="INTERNSHIP" {% if request.GET.job_type == 'INTERNSHIP' %}selected{% endif %}>Internship</option>
+                <option value="TEMPORARY" {% if request.GET.job_type == 'TEMPORARY' %}selected{% endif %}>Temporary</option>
+                <option value="REMOTE" {% if request.GET.job_type == 'REMOTE' %}selected{% endif %}>Remote</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{% url 'jobs:home' %}" class="btn btn-secondary">Clear</a>
+        </form>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-tie me-2"></i>For Job Seekers</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Looking for your next career opportunity? Register as a job seeker to:</p>
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Browse and apply for jobs</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Save jobs for later</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Track your applications</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Get matched with relevant jobs</li>
+                    </ul>
+                    {% if not user.is_authenticated or not user.myapp_jobseeker %}
+                        <a href="{% url 'jobs:jobseeker_register' %}" class="btn btn-primary btn-custom">Register as Job Seeker</a>
+                    {% elif user.is_authenticated and user.myapp_jobseeker %}
+                        <a href="{% url 'jobs:jobseeker_dashboard' %}" class="btn btn-primary btn-custom">Go to Dashboard</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-building me-2"></i>For Employers</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Looking to hire talented professionals? Register as an employer to:</p>
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Post job openings</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Manage applications</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Find qualified candidates</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Track application status</li>
+                    </ul>
+                    {% if not user.is_authenticated or not user.myapp_employer %}
+                        <a href="{% url 'jobs:employer_register' %}" class="btn btn-success btn-custom">Register as Employer</a>
+                    {% elif user.is_authenticated and user.myapp_employer %}
+                        <a href="{% url 'jobs:employer_dashboard' %}" class="btn btn-success btn-custom">Go to Dashboard</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-12">
+            {% if request.GET.q or request.GET.location or request.GET.job_type %}
+                <h2 class="text-center section-title" id="searchResults">Search Results</h2>
+            {% else %}
+                <h2 class="text-center section-title">Featured Jobs</h2>
+            {% endif %}
+            {% if jobs %}
+                <div class="row">
+                    {% for job in jobs %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card job-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ job.title }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ job.employer.company_name }}</h6>
+                                    <p class="card-text">
+                                        <i class="fas fa-map-marker-alt me-2"></i>{{ job.location }}
+                                        <br>
+                                        <i class="fas fa-briefcase me-2"></i>{{ job.get_job_type_display }}
+                                    </p>
+                                    <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-outline-primary btn-custom">View Details</a>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    <small>Posted {{ job.created_at|timesince }} ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {% if request.GET.q or request.GET.location or request.GET.job_type %}
+                    <div class="alert alert-warning text-center">
+                        <i class="fas fa-info-circle me-2"></i>No jobs found matching your criteria.
+                    </div>
+                {% else %}
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>No jobs available at the moment. Check back later!
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('searchForm');
+    
+    searchForm.addEventListener('submit', function() {
+        // After form submission, scroll to search results
+        setTimeout(function() {
+            const searchResults = document.getElementById('searchResults');
+            if (searchResults) {
+                searchResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    });
+
+    // If there are search parameters in the URL, scroll to results on page load
+    if (window.location.search) {
+        const searchResults = document.getElementById('searchResults');
+        if (searchResults) {
+            searchResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+});
+</script>
+{% endblock %}
+
+{% endblock %} 

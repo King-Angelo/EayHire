@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.css">
+<style>
+.metric-card {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.metric-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.metric-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.metric-change {
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+}
+
+.metric-change.positive {
+    color: #059669;
+}
+
+.metric-change.negative {
+    color: #dc2626;
+}
+
+.chart-container {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.chart-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+}
+
+.funnel-step {
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    background: #f3f4f6;
+    position: relative;
+}
+
+.funnel-step-label {
+    font-weight: 500;
+    color: #374151;
+}
+
+.funnel-step-value {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 600;
+}
+
+.funnel-step-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: #e5e7eb;
+    border-radius: 0.375rem;
+    z-index: 0;
+}
+
+.funnel-step-content {
+    position: relative;
+    z-index: 1;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0">Analytics for {{ object.title }}</h1>
+                <div class="btn-group">
+                    <a href="?date_range=7" class="btn btn-outline-primary {% if date_range == '7' %}active{% endif %}">7 Days</a>
+                    <a href="?date_range=30" class="btn btn-outline-primary {% if date_range == '30' %}active{% endif %}">30 Days</a>
+                    <a href="?date_range=90" class="btn btn-outline-primary {% if date_range == '90' %}active{% endif %}">90 Days</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-title">Total Views</div>
+                <div class="metric-value">{{ metrics.views }}</div>
+                <div class="metric-change positive">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    12.5%
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-title">Unique Views</div>
+                <div class="metric-value">{{ metrics.unique_views }}</div>
+                <div class="metric-change positive">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    8.3%
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-title">Applications</div>
+                <div class="metric-value">{{ metrics.applications }}</div>
+                <div class="metric-change positive">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    15.2%
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-title">Conversion Rate</div>
+                <div class="metric-value">{{ metrics.application_rate|floatformat:1 }}%</div>
+                <div class="metric-change negative">
+                    <i class="fas fa-arrow-down me-1"></i>
+                    2.1%
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Daily Views Chart -->
+        <div class="col-md-8">
+            <div class="chart-container">
+                <h2 class="chart-title">Daily Views</h2>
+                <canvas id="viewsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Application Funnel -->
+        <div class="col-md-4">
+            <div class="chart-container">
+                <h2 class="chart-title">Application Funnel</h2>
+                <div class="funnel">
+                    {% with max_value=funnel_data.impressions %}
+                    <div class="funnel-step">
+                        <div class="funnel-step-bar" style="width: 100%"></div>
+                        <div class="funnel-step-content">
+                            <span class="funnel-step-label">Impressions</span>
+                            <span class="funnel-step-value">{{ funnel_data.impressions }}</span>
+                        </div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-step-bar" style="width: {% widthratio funnel_data.views max_value 100 %}%"></div>
+                        <div class="funnel-step-content">
+                            <span class="funnel-step-label">Views</span>
+                            <span class="funnel-step-value">{{ funnel_data.views }}</span>
+                        </div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-step-bar" style="width: {% widthratio funnel_data.unique_views max_value 100 %}%"></div>
+                        <div class="funnel-step-content">
+                            <span class="funnel-step-label">Unique Views</span>
+                            <span class="funnel-step-value">{{ funnel_data.unique_views }}</span>
+                        </div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-step-bar" style="width: {% widthratio funnel_data.applications max_value 100 %}%"></div>
+                        <div class="funnel-step-content">
+                            <span class="funnel-step-label">Applications</span>
+                            <span class="funnel-step-value">{{ funnel_data.applications }}</span>
+                        </div>
+                    </div>
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Top Search Queries -->
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h2 class="chart-title">Top Search Queries</h2>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Search Query</th>
+                                <th class="text-end">Views</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for search in top_searches %}
+                            <tr>
+                                <td>{{ search.query }}</td>
+                                <td class="text-end">{{ search.count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geographic Distribution -->
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h2 class="chart-title">Applicant Locations</h2>
+                <canvas id="geoChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Daily Views Chart
+    const viewsCtx = document.getElementById('viewsChart').getContext('2d');
+    new Chart(viewsCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for view in daily_views %}'{{ view.date|date:"M d" }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Views',
+                data: [{% for view in daily_views %}{{ view.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+
+    // Geographic Distribution Chart
+    const geoCtx = document.getElementById('geoChart').getContext('2d');
+    new Chart(geoCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [{% for location in geo_distribution %}'{{ location.jobseeker__location }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                data: [{% for location in geo_distribution %}{{ location.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: [
+                    '#3b82f6',
+                    '#10b981',
+                    '#f59e0b',
+                    '#ef4444',
+                    '#8b5cf6'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

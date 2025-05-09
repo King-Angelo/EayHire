@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Account Locked" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .lockout-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .lockout-container h1 {
+        color: #dc3545;
+        margin-bottom: 1.5rem;
+    }
+
+    .lockout-container p {
+        color: #666;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .lockout-container .alert {
+        background: #fff3f3;
+        border: 1px solid #ffd6d6;
+        color: #dc3545;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1.5rem;
+    }
+
+    .lockout-container .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+
+    .lockout-container .btn:hover {
+        background: #0056b3;
+        color: white;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lockout-container">
+    <h1>{% trans "Account Locked" %}</h1>
+    
+    <div class="alert">
+        <p>{% trans "Too many failed login attempts. Please try again later." %}</p>
+    </div>
+
+    <p>
+        {% blocktrans %}
+        Your account has been temporarily locked due to too many failed login attempts.
+        This is a security measure to protect your account from unauthorized access.
+        {% endblocktrans %}
+    </p>
+
+    <p>
+        {% blocktrans %}
+        The lockout will be automatically lifted after a certain period of time.
+        If you believe this is an error, please contact support.
+        {% endblocktrans %}
+    </p>
+
+    <a href="{% url 'account_login' %}" class="btn">
+        {% trans "Return to Login" %}
+    </a>
+</div>
+{% endblock %} 

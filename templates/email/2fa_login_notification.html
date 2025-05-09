@@ -1,0 +1,77 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .content {
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>{% trans "New Login with 2FA" %}</h2>
+    </div>
+    
+    <div class="content">
+        <p>{% trans "Hello" %} {{ user.get_full_name|default:user.username }},</p>
+        
+        <p>{% trans "We detected a new login to your account with two-factor authentication." %}</p>
+        
+        <div class="warning">
+            <p><strong>{% trans "Login Details:" %}</strong></p>
+            <p>{% trans "Time:" %} {{ login_time }}</p>
+            <p>{% trans "IP Address:" %} {{ ip_address }}</p>
+            <p>{% trans "Location:" %} {{ location }}</p>
+        </div>
+        
+        <p>{% trans "If this was you, you can safely ignore this email." %}</p>
+        
+        <p>{% trans "If you did not attempt to log in, please:" %}</p>
+        <ol>
+            <li>{% trans "Change your password immediately" %}</li>
+            <li>{% trans "Contact our support team" %}</li>
+            <li>{% trans "Review your account security settings" %}</li>
+        </ol>
+        
+        <p>{% trans "Best regards," %}<br>{% trans "Your Site Team" %}</p>
+    </div>
+    
+    <div class="footer">
+        <p>{% trans "This is an automated message, please do not reply to this email." %}</p>
+    </div>
+</body>
+</html> 

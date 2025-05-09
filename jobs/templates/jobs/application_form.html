@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Application{% else %}Submit Application{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">
+                        {% if form.instance.pk %}
+                            Edit Application for {{ form.instance.job.title }}
+                        {% else %}
+                            Submit Application for {{ job.title }}
+                        {% endif %}
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.cover_letter.id_for_label }}" class="form-label">Cover Letter</label>
+                            {{ form.cover_letter }}
+                            {% if form.cover_letter.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.cover_letter.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Write a compelling cover letter explaining why you're a great fit for this position.
+                                {% if form.instance.pk %}
+                                    Your previous cover letter will be replaced with this new one.
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.resume.id_for_label }}" class="form-label">Resume</label>
+                            {{ form.resume }}
+                            {% if form.resume.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.resume.errors }}
+                                </div>
+                            {% endif %}
+                            {% if form.resume.help_text %}
+                                <div class="form-text">{{ form.resume.help_text }}</div>
+                            {% endif %}
+                            {% if form.instance.pk and form.instance.resume %}
+                                <div class="mt-2">
+                                    <small class="text-muted">Current resume: 
+                                        <a href="{{ form.instance.resume.url }}" target="_blank">
+                                            {{ form.instance.resume.name|cut:"resumes/"|default:form.instance.resume.name }}
+                                        </a>
+                                    </small>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% if form.instance.pk %}{% url 'jobs:application_detail' form.instance.pk %}{% else %}{% url 'jobs:job_detail' job.pk %}{% endif %}" 
+                               class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                {% if form.instance.pk %}Update{% else %}Submit{% endif %} Application
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

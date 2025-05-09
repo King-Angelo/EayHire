@@ -1,0 +1,21 @@
+Hi {{ jobseeker.user.first_name }},
+
+We found {{ new_jobs|length }} new job{{ new_jobs|length|pluralize }} matching your saved search "{{ search_title }}".
+
+{% for job in new_jobs %}
+{{ job.title }}
+{{ job.employer.company_name }}
+{{ job.get_job_type_display }} | {{ job.get_experience_level_display }}{% if job.is_remote %} | Remote{% endif %}
+Location: {{ job.location }}
+{% if job.salary_min and job.salary_max %}Salary: ${{ job.salary_min|floatformat:0 }} - ${{ job.salary_max|floatformat:0 }}{% endif %}
+Posted: {{ job.created_at|timesince }} ago
+View job: {{ job.get_absolute_url }}
+
+{% endfor %}
+View all matching jobs: {{ search_url }}
+
+---
+You're receiving this email because you enabled notifications for this saved search.
+To manage your notification settings, visit your saved searches in your account dashboard.
+
+© {% now "Y" %} JobPortal. All rights reserved. 

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block head_title %}Job Alert - {{ alert.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Alert Details -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{{ alert.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert-info mb-4">
+                        <p class="mb-2">
+                            <i class="fas fa-bell"></i> 
+                            {% if alert.is_active %}
+                                <span class="text-success">Active</span>
+                            {% else %}
+                                <span class="text-muted">Inactive</span>
+                            {% endif %}
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-envelope"></i> 
+                            {% if alert.email_notifications %}
+                                <span class="text-success">Email notifications enabled</span>
+                            {% else %}
+                                <span class="text-muted">Email notifications disabled</span>
+                            {% endif %}
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-calendar"></i> Created on {{ alert.created_at|date:"F j, Y" }}
+                        </p>
+                    </div>
+                    
+                    <h5 class="mt-4">Search Criteria</h5>
+                    <div class="search-criteria">
+                        <p><strong>Keywords:</strong> {{ alert.keywords }}</p>
+                        <p><strong>Location:</strong> {{ alert.location }}</p>
+                        <p><strong>Job Types:</strong> {{ alert.job_types }}</p>
+                        <p><strong>Frequency:</strong> {{ alert.get_frequency_display }}</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'jobs:job_alert_update' alert.pk %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Edit Alert
+                        </a>
+                        <a href="{% url 'jobs:job_alert_delete' alert.pk %}" class="btn btn-danger">
+                            <i class="fas fa-trash-alt me-2"></i>Delete Alert
+                        </a>
+                        <form method="post" action="{% url 'jobs:job_alert_toggle' alert.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fas fa-power-off me-2"></i>
+                                {% if alert.is_active %}Deactivate{% else %}Activate{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Matching Jobs -->
+            <div class="card shadow">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Matching Jobs</h5>
+                </div>
+                <div class="card-body">
+                    {% for job in matching_jobs %}
+                        <div class="job-item mb-3">
+                            <h6 class="card-title">{{ job.title }}</h6>
+                            <p class="card-text small">
+                                {{ job.company.name }}<br>
+                                <i class="fas fa-map-marker-alt"></i> {{ job.location }}<br>
+                                <i class="fas fa-briefcase"></i> {{ job.get_job_type_display }}
+                            </p>
+                            <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        </div>
+                        {% if not forloop.last %}<hr>{% endif %}
+                    {% empty %}
+                        <p class="text-muted">No matching jobs found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Alert History -->
+            <div class="card shadow">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Alert History</h5>
+                </div>
+                <div class="card-body">
+                    {% for history in alert_history %}
+                        <div class="mb-3">
+                            <p class="mb-1">
+                                <strong>{{ history.get_action_display }}</strong>
+                                <small class="text-muted">{{ history.created_at|timesince }} ago</small>
+                            </p>
+                            {% if history.details %}
+                                <p class="small text-muted">{{ history.details }}</p>
+                            {% endif %}
+                        </div>
+                        {% if not forloop.last %}<hr>{% endif %}
+                    {% empty %}
+                        <p class="text-muted">No history available.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

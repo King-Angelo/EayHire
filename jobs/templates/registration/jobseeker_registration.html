@@ -1,0 +1,98 @@
+{% extends "registration/base_registration.html" %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+<style>
+    .registration-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-title {
+        color: #333;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .select2-container {
+        width: 100% !important;
+    }
+    
+    .help-text {
+        font-size: 0.875rem;
+        color: #666;
+        margin-top: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block registration_title %}
+<h2 class="text-center mb-4">Job Seeker Registration</h2>
+{% endblock %}
+
+{% block form_fields %}
+<div class="registration-container">
+    <form method="post" class="registration-form">
+        {% csrf_token %}
+        
+        <h4 class="section-title">Account Information</h4>
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.username|crispy }}
+            </div>
+            <div class="col-md-6">
+                {{ form.email|crispy }}
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.password1|crispy }}
+            </div>
+            <div class="col-md-6">
+                {{ form.password2|crispy }}
+            </div>
+        </div>
+
+        <h4 class="section-title mt-4">Personal Information</h4>
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.phone|crispy }}
+            </div>
+            <div class="col-md-6">
+                {{ form.location|crispy }}
+            </div>
+        </div>
+        {{ form.address|crispy }}
+
+        <h4 class="section-title mt-4">Professional Information</h4>
+        {{ form.professional_summary|crispy }}
+        {{ form.education|crispy }}
+        {{ form.experience|crispy }}
+        {{ form.skills|crispy }}
+        
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.expected_salary|crispy }}
+            </div>
+            <div class="col-md-6">
+                {{ form.preferred_job_types|crispy }}
+            </div>
+        </div>
+        {{ form.preferred_locations|crispy }}
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">Register</button>
+        </div>
+    </form>
+</div>
+{% endblock %} 
